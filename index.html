@@ -144,19 +144,71 @@
   </div>
 
   <div class="tabs">
-    <div class="tab on" data-tab="frame">Кадр</div>
-    <div class="tab" data-tab="caps">Надписи</div>
+    <div class="tab on" data-tab="frame">Главное</div>
+    <div class="tab" data-tab="caps">Субтитры</div>
     <div class="tab" data-tab="look">Картинка и звук</div>
   </div>
 
-  <!-- ============ TAB: FRAME ============ -->
+  <!-- ============ TAB: MAIN (title + assembly) ============ -->
   <section class="panel-sec on" data-sec="frame">
     <div class="group">
-      <div class="lab">Кадрирование</div>
-      <div class="hint">Как поставить видео в вертикаль 9:16.</div>
-      <div class="seg" data-key="frame">
-        <button class="on" data-val="blur">По центру<span class="em">фон-блюр</span></button>
-        <button data-val="track">За лицом<span class="em">приближение</span></button>
+      <div class="lab">Заголовок на видео</div>
+      <div class="hint">Крупная надпись-хук в начале. Смотри, как ляжет, на превью сверху. Оставь пустым — предложу варианты.</div>
+      <textarea class="field" rows="2" data-key="hook.text" id="hookText" placeholder="Напр.: Почему деньги — это про энергию"></textarea>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Стиль заголовка</div>
+      <div class="seg" data-key="hook.style">
+        <button class="on" data-val="brand">Бренд</button>
+        <button data-val="script">Рукописный</button>
+        <button data-val="statement">Заявление</button>
+      </div>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Цвет заголовка</div>
+      <div class="swatches" data-key="hook.color" id="hookSwatches">
+        <div class="sw on auto" data-val="" title="по стилю"><span style="font-size:10px;color:#7a7a7a">Авто</span></div>
+        <div class="sw" style="background:#F5F0EA" data-val="#F5F0EA"></div>
+        <div class="sw" style="background:#FFFFFF" data-val="#FFFFFF"></div>
+        <div class="sw" style="background:#C4A882" data-val="#C4A882"></div>
+        <div class="sw" style="background:#E3A21A" data-val="#E3A21A"></div>
+        <div class="sw" style="background:#C0614C" data-val="#C0614C"></div>
+        <div class="sw" style="background:#7FA6C9" data-val="#7FA6C9"></div>
+        <div class="sw" style="background:#2E3A3F" data-val="#2E3A3F"></div>
+        <div class="sw" style="background:#1E1E1E" data-val="#1E1E1E"></div>
+        <label class="sw custom" title="свой цвет">
+          <input type="color" id="hookCustomColor" value="#F5F0EA">
+        </label>
+      </div>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Расположение — <b>тащи по предпросмотру</b>, или пресет:</div>
+      <div class="seg" data-key="hook.placement">
+        <button class="on" data-val="top">Сверху</button>
+        <button data-val="center">Центр</button>
+        <button data-val="bottom">Снизу</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><div class="t">Подложка-панель</div><div class="d">Плашка под текстом для читаемости</div></div>
+        <label class="switch"><input type="checkbox" checked data-key="hook.panel"><span class="slider"></span></label>
+      </div>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Шрифт заголовка <span class="soon">СКОРО</span> — латиница, своё начертание:</div>
+      <div class="fontgrid" data-key="hook.font" id="hookFont">
+        <button class="fontbtn on" data-val="playfair"   style="font-family:'Playfair Display';font-weight:700">Playfair</button>
+        <button class="fontbtn"    data-val="fraunces"   style="font-family:'Fraunces';font-weight:600">Fraunces</button>
+        <button class="fontbtn"    data-val="cormorant"  style="font-family:'Cormorant';font-style:italic">Cormorant</button>
+        <button class="fontbtn"    data-val="dmserif"    style="font-family:'DM Serif Display'">DM Serif</button>
+        <button class="fontbtn"    data-val="yeseva"     style="font-family:'Yeseva One'">Yeseva One</button>
+        <button class="fontbtn"    data-val="instrument" style="font-family:'Instrument Serif';font-size:17px">Instrument</button>
+        <button class="fontbtn"    data-val="libre"      style="font-family:'Libre Baskerville';font-weight:700;font-size:13px">Baskerville</button>
+        <button class="fontbtn"    data-val="anton"      style="font-family:'Anton';text-transform:uppercase">Anton</button>
+        <button class="fontbtn"    data-val="bebas"      style="font-family:'Bebas Neue';letter-spacing:.5px;font-size:18px">Bebas Neue</button>
+        <button class="fontbtn"    data-val="unbounded"  style="font-family:'Unbounded';font-weight:700">Unbounded</button>
+        <button class="fontbtn"    data-val="dancing"    style="font-family:'Dancing Script';font-weight:700;font-size:18px">Dancing</button>
+        <button class="fontbtn"    data-val="pacifico"   style="font-family:'Pacifico';font-size:16px">Pacifico</button>
+      </div>
+      <div class="rangewrap">
+        <span class="val" id="hookSizeVal">100%</span>
+        <div class="d">Размер заголовка <span class="soon">СКОРО</span></div>
+        <input type="range" min="60" max="170" value="100" data-key="hook.size" id="hookSizeR">
       </div>
     </div>
     <div class="group">
@@ -188,9 +240,10 @@
       <div class="lab">Стиль субтитров</div>
       <div class="hint">Как показывать речь на видео.</div>
       <div class="seg" data-key="subs.mode">
-        <button class="on" data-val="karaoke">Слово-за-словом</button>
+        <button class="on" data-val="breath">Слово-за-словом<span class="em">вылетание</span></button>
+        <button data-val="karaoke">Караоке<span class="em">подсветка</span></button>
         <button data-val="flow">Фразами</button>
-        <button data-val="none">Без субтитров</button>
+        <button data-val="none">Без</button>
       </div>
     </div>
     <div class="group">
@@ -236,50 +289,6 @@
         <button class="fontbtn"    data-val="anton"      style="font-family:'Anton';text-transform:uppercase">Anton</button>
         <button class="fontbtn"    data-val="unbounded"  style="font-family:'Unbounded';font-weight:700">Unbounded</button>
         <button class="fontbtn"    data-val="pixelify"   style="font-family:'Pixelify Sans';font-weight:700">Pixelify</button>
-      </div>
-    </div>
-    <div class="group">
-      <div class="lab">Заголовок на видео</div>
-      <div class="hint">Крупная надпись-хук в начале. Оставь пустым — предложу варианты.</div>
-      <textarea class="field" rows="2" data-key="hook.text" id="hookText" placeholder="Напр.: Почему деньги — это про энергию"></textarea>
-      <div style="height:12px"></div>
-      <div class="d" style="margin-bottom:6px">Стиль заголовка</div>
-      <div class="seg" data-key="hook.style">
-        <button class="on" data-val="brand">Бренд</button>
-        <button data-val="script">Рукописный</button>
-        <button data-val="statement">Заявление</button>
-      </div>
-      <div style="height:12px"></div>
-      <div class="d" style="margin-bottom:6px">Расположение — <b>тащи по предпросмотру</b>, или пресет:</div>
-      <div class="seg" data-key="hook.placement">
-        <button class="on" data-val="top">Сверху</button>
-        <button data-val="center">Центр</button>
-        <button data-val="bottom">Снизу</button>
-      </div>
-      <div class="row" style="margin-top:8px">
-        <div><div class="t">Подложка-панель</div><div class="d">Плашка под текстом для читаемости</div></div>
-        <label class="switch"><input type="checkbox" checked data-key="hook.panel"><span class="slider"></span></label>
-      </div>
-      <div style="height:12px"></div>
-      <div class="d" style="margin-bottom:6px">Шрифт заголовка <span class="soon">СКОРО</span> — латиница, своё начертание:</div>
-      <div class="fontgrid" data-key="hook.font" id="hookFont">
-        <button class="fontbtn on" data-val="playfair"   style="font-family:'Playfair Display';font-weight:700">Playfair</button>
-        <button class="fontbtn"    data-val="fraunces"   style="font-family:'Fraunces';font-weight:600">Fraunces</button>
-        <button class="fontbtn"    data-val="cormorant"  style="font-family:'Cormorant';font-style:italic">Cormorant</button>
-        <button class="fontbtn"    data-val="dmserif"    style="font-family:'DM Serif Display'">DM Serif</button>
-        <button class="fontbtn"    data-val="yeseva"     style="font-family:'Yeseva One'">Yeseva One</button>
-        <button class="fontbtn"    data-val="instrument" style="font-family:'Instrument Serif';font-size:17px">Instrument</button>
-        <button class="fontbtn"    data-val="libre"      style="font-family:'Libre Baskerville';font-weight:700;font-size:13px">Baskerville</button>
-        <button class="fontbtn"    data-val="anton"      style="font-family:'Anton';text-transform:uppercase">Anton</button>
-        <button class="fontbtn"    data-val="bebas"      style="font-family:'Bebas Neue';letter-spacing:.5px;font-size:18px">Bebas Neue</button>
-        <button class="fontbtn"    data-val="unbounded"  style="font-family:'Unbounded';font-weight:700">Unbounded</button>
-        <button class="fontbtn"    data-val="dancing"    style="font-family:'Dancing Script';font-weight:700;font-size:18px">Dancing</button>
-        <button class="fontbtn"    data-val="pacifico"   style="font-family:'Pacifico';font-size:16px">Pacifico</button>
-      </div>
-      <div class="rangewrap">
-        <span class="val" id="hookSizeVal">100%</span>
-        <div class="d">Размер заголовка <span class="soon">СКОРО</span></div>
-        <input type="range" min="60" max="170" value="100" data-key="hook.size" id="hookSizeR">
       </div>
     </div>
   </section>
@@ -359,8 +368,8 @@ const S = {
   frame: "blur",
   assembly: "whole",
   dense: { on:false, intensity:50 },
-  subs: { mode:"karaoke", size:"m", highlight:"#E3A21A", font:"montserrat" },
-  hook: { text:"", style:"brand", placement:"top", panel:true, font:"playfair", size:100, pos:{ x:0.5, y:0.10 } },
+  subs: { mode:"breath", size:"m", highlight:"#E3A21A", font:"montserrat" },
+  hook: { text:"", style:"brand", color:"", placement:"top", panel:true, font:"playfair", size:100, pos:{ x:0.5, y:0.10 } },
   subsPos: { x:0.5, y:0.90 },
   look: { grade:"none", brightness:0, skin:false },
   sound: { mode:"enhance", tempo:100 }
@@ -417,6 +426,15 @@ customColor.oninput = ()=>{
   customColor.parentElement.classList.add("on");
   setPath("subs.highlight", customColor.value);
 };
+// custom hook-title colour picker
+const hookCustomColor = document.getElementById("hookCustomColor");
+if(hookCustomColor){
+  hookCustomColor.oninput = ()=>{
+    document.querySelectorAll("#hookSwatches .sw").forEach(x=>x.classList.remove("on"));
+    hookCustomColor.parentElement.classList.add("on");
+    setPath("hook.color", hookCustomColor.value);
+  };
+}
 
 // font grids — each button already renders in its own face (latin only)
 const FONT_CSS = {
@@ -501,6 +519,7 @@ function render(){
   hook.className = "pv-hook " + S.hook.style + (S.hook.panel ? " panel" : "");
   hook.style.fontFamily = FONT_CSS[S.hook.font] || "'Playfair Display',serif";
   hook.style.fontSize = (12 * S.hook.size / 100).toFixed(1) + "px";
+  hook.style.color = S.hook.color || "";
   placeEl(hook, S.hook.pos);
   const subs = document.getElementById("pvSubs");
   subs.className = "pv-subs " + (S.subs.mode==="none" ? "none" : "");
