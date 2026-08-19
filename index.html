@@ -33,7 +33,9 @@
     box-shadow:0 10px 30px rgba(0,0,0,.18); border:2px solid #0d1113;
   }
   .pv-video{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    background:linear-gradient(160deg,#3a4a52,#222a2e); color:#cfd8dc; font-size:11px}
+    background:linear-gradient(160deg,#3a4a52,#222a2e); color:#cfd8dc; font-size:11px;
+    background-size:cover; background-position:center}
+  .pv-video.has-frame #pvLabel{display:none}
   .pv-video.blur{filter:none}
   .pv-face{position:absolute; width:70px; height:70px; border-radius:50%;
     border:2px dashed rgba(255,255,255,.5); top:56px; left:40px; display:none}
@@ -332,6 +334,25 @@
 const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
 if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor('#FBF8F2'); }catch(e){} }
 
+// A real frame from Inna's uploaded video is passed by the bot as ?frame=<https url>
+// (&or=h|v = source orientation). Show it as the preview background so she sees her
+// actual footage, not a placeholder gradient. Validated + best-effort — absent/bad
+// param just keeps the default gradient.
+const QP = new URLSearchParams(location.search);
+const FRAME_URL = (function(){
+  const f = QP.get("frame") || "";
+  return /^https:\/\/[^"'()\s]+$/.test(f) ? f : "";
+})();
+if (FRAME_URL) {
+  const im = new Image();
+  im.onload = function(){
+    const pv = document.getElementById("pv");
+    pv.style.backgroundImage = 'url("' + FRAME_URL + '")';
+    pv.classList.add("has-frame");
+  };
+  im.src = FRAME_URL;
+}
+
 // settings model (mapped to galochka render params)
 const S = {
   v: 1,
@@ -472,7 +493,8 @@ makeDraggable(document.getElementById("pvSubs"), ()=>S.subsPos, p=>{ S.subsPos=p
 // live preview
 function render(){
   const pv = document.getElementById("pv");
-  pv.className = "pv pv-video " + (S.frame==="blur" ? "blur" : "track");
+  const hasFrame = pv.classList.contains("has-frame");
+  pv.className = "pv pv-video " + (S.frame==="blur" ? "blur" : "track") + (hasFrame ? " has-frame" : "");
   document.getElementById("pvLabel").textContent = S.frame==="track" ? "за лицом" : "кадр";
   const hook = document.getElementById("pvHook");
   hook.textContent = S.hook.text ? S.hook.text.slice(0,40) : "Headline";
