@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Настройки рилса — Галочка</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,500&family=Fraunces:ital,wght@0,500;0,600;1,500&family=Cormorant:ital,wght@0,600;1,500&family=DM+Serif+Display:ital@0;1&family=Yeseva+One&family=Instrument+Serif:ital@0;1&family=Libre+Baskerville:ital,wght@0,700;1,400&family=Montserrat:wght@500;700;800&family=Manrope:wght@500;700&family=Space+Grotesk:wght@500;700&family=Syne:wght@600;800&family=Archivo:wght@600;800&family=Anton&family=Bebas+Neue&family=Oswald:wght@500;600&family=Unbounded:wght@600;700&family=Pixelify+Sans:wght@500;700&family=Dancing+Script:wght@600;700&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBF8F2; --card:#FFFFFF; --ink:#1E1E1E; --body:#585858;
+    --muted:#9A968B; --line:#ECE6DB; --gold:#E3A21A; --cream:#FBEFCF;
+    --active:#1E1E1E; --activeInk:#FFFFFF; --radius:16px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; padding:0}
+  body{
+    font-family:"Golos Text",system-ui,-apple-system,sans-serif;
+    background:var(--paper); color:var(--ink);
+    padding:0 0 96px; line-height:1.35;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:520px; margin:0 auto; padding:14px 16px 0}
+  h1{font-family:"Playfair Display",serif; font-weight:700; font-size:22px; margin:6px 0 2px}
+  .sub{color:var(--muted); font-size:13px; margin:0 0 14px}
+
+  /* preview phone */
+  .preview{
+    position:sticky; top:8px; z-index:5; margin:0 auto 14px; width:150px; height:266px;
+    border-radius:20px; overflow:hidden; background:#20262a;
+    box-shadow:0 10px 30px rgba(0,0,0,.18); border:2px solid #0d1113;
+  }
+  .pv-video{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:linear-gradient(160deg,#3a4a52,#222a2e); color:#cfd8dc; font-size:11px}
+  .pv-video.blur{filter:none}
+  .pv-face{position:absolute; width:70px; height:70px; border-radius:50%;
+    border:2px dashed rgba(255,255,255,.5); top:56px; left:40px; display:none}
+  .pv.track .pv-face{display:block}
+  .pv-hook{position:absolute; left:8px; right:8px; text-align:center; color:#fff;
+    font-family:"Playfair Display",serif; font-size:12px; line-height:1.15;
+    text-shadow:0 1px 4px rgba(0,0,0,.5)}
+  .pv-hook.panel{background:rgba(30,36,40,.55); border-radius:8px; padding:5px 6px}
+  .pv-hook.script{font-style:italic}
+  .pv-hook.statement{font-weight:700; letter-spacing:.3px}
+  .pv-hook{cursor:grab; touch-action:none}
+  .pv-subs{position:absolute; left:8px; right:8px; text-align:center;
+    font-weight:600; color:#fff; font-size:11px; text-shadow:0 1px 3px rgba(0,0,0,.7);
+    cursor:grab; touch-action:none}
+  .pv-subs .hl{color:var(--gold)}
+  .pv-subs.none{display:none}
+  .pv-hook.drag,.pv-subs.drag{cursor:grabbing; outline:1px dashed var(--gold)}
+  .pv-hint{position:absolute; left:0; right:0; bottom:3px; text-align:center;
+    font-size:8px; color:rgba(255,255,255,.55)}
+  .pv-badge{position:absolute; top:8px; right:8px; background:var(--gold); color:#1e1e1e;
+    font-size:8px; font-weight:600; padding:2px 5px; border-radius:6px}
+
+  /* tabs */
+  .tabs{display:flex; gap:6px; margin:0 0 14px}
+  .tab{flex:1; text-align:center; padding:9px 4px; border-radius:12px; font-size:13px;
+    font-weight:600; color:var(--body); background:var(--card); border:1px solid var(--line);
+    cursor:pointer; transition:.15s}
+  .tab.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+
+  .panel-sec{display:none}
+  .panel-sec.on{display:block; animation:fade .18s ease}
+  @keyframes fade{from{opacity:0; transform:translateY(4px)}to{opacity:1; transform:none}}
+
+  .group{background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px; margin:0 0 12px}
+  .group>.lab{font-size:14px; font-weight:600; margin:0 0 3px; display:flex; align-items:center; gap:7px}
+  .group>.hint{font-size:12px; color:var(--muted); margin:0 0 10px}
+  .soon{font-size:9px; font-weight:600; color:var(--gold); border:1px solid var(--gold);
+    border-radius:6px; padding:1px 5px; letter-spacing:.3px}
+
+  .seg{display:flex; gap:6px; flex-wrap:wrap}
+  .seg button{flex:1 1 auto; min-width:0; padding:11px 8px; border-radius:12px; font-size:13px;
+    font-weight:500; color:var(--ink); background:var(--paper); border:1px solid var(--line);
+    cursor:pointer; transition:.12s; white-space:nowrap}
+  .seg button .em{display:block; font-size:11px; color:var(--muted); font-weight:400; margin-top:1px}
+  .seg button.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+  .seg button.on .em{color:rgba(255,255,255,.7)}
+  .seg.dim button{opacity:.6}
+
+  .swatches{display:flex; gap:9px; flex-wrap:wrap}
+  .sw{width:30px; height:30px; border-radius:50%; cursor:pointer; border:2px solid var(--line)}
+  .sw.on{border-color:var(--ink); transform:scale(1.12); box-shadow:0 0 0 2px #fff inset}
+  .sw.custom{position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center;
+    background:conic-gradient(#e3a21a,#e85d9e,#7fa6c9,#6e8b5e,#f5c518,#e3a21a); border-style:solid}
+  .sw.custom input{position:absolute; inset:-4px; opacity:0; cursor:pointer}
+
+  .fontgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:8px}
+  .fontbtn{padding:12px 8px; border-radius:12px; font-size:15px; color:var(--ink);
+    background:var(--paper); border:1px solid var(--line); cursor:pointer; transition:.12s;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+  .fontbtn.on{background:var(--ink); color:#fff; border-color:var(--ink)}
+
+  .field{width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:12px;
+    font:inherit; font-size:14px; background:var(--paper); color:var(--ink); resize:none}
+  .field:focus{outline:none; border-color:var(--gold)}
+
+  .row{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:6px 0}
+  .row .t{font-size:14px}
+  .row .d{font-size:12px; color:var(--muted)}
+  .switch{position:relative; width:46px; height:27px; flex:0 0 auto}
+  .switch input{opacity:0; width:0; height:0}
+  .slider{position:absolute; inset:0; background:var(--line); border-radius:20px; transition:.15s; cursor:pointer}
+  .slider::before{content:""; position:absolute; width:21px; height:21px; left:3px; top:3px;
+    background:#fff; border-radius:50%; transition:.15s; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+  .switch input:checked + .slider{background:var(--gold)}
+  .switch input:checked + .slider::before{transform:translateX(19px)}
+
+  input[type=range]{width:100%; accent-color:var(--gold)}
+  .rangewrap{margin-top:8px}
+  .rangewrap .val{font-size:12px; color:var(--muted); float:right}
+
+  .cta{position:fixed; left:0; right:0; bottom:0; padding:12px 16px 18px;
+    background:linear-gradient(to top, var(--paper) 78%, transparent);}
+  .cta .inner{max-width:520px; margin:0 auto}
+  .go{width:100%; padding:15px; border:none; border-radius:14px; font:inherit; font-weight:600;
+    font-size:16px; color:#fff; background:var(--ink); cursor:pointer}
+  .go:active{transform:translateY(1px)}
+  .note{text-align:center; font-size:11px; color:var(--muted); margin:8px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Настройки рилса</h1>
+  <p class="sub">Выбери всё сразу — соберу по этим параметрам. Значения по умолчанию уже выставлены.</p>
+
+  <!-- live preview -->
+  <div class="preview">
+    <div class="pv pv-video blur" id="pv">
+      <span id="pvLabel">кадр</span>
+      <div class="pv-face"></div>
+      <div class="pv-hook panel" id="pvHook">Заголовок</div>
+      <div class="pv-subs" id="pvSubs">this <span class="hl">matters</span> now</div>
+      <div class="pv-badge" id="pvBadge">9:16</div>
+      <div class="pv-hint">тащи заголовок и субтитры</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="frame">Кадр</div>
+    <div class="tab" data-tab="caps">Надписи</div>
+    <div class="tab" data-tab="look">Картинка и звук</div>
+  </div>
+
+  <!-- ============ TAB: FRAME ============ -->
+  <section class="panel-sec on" data-sec="frame">
+    <div class="group">
+      <div class="lab">Кадрирование</div>
+      <div class="hint">Как поставить видео в вертикаль 9:16.</div>
+      <div class="seg" data-key="frame">
+        <button class="on" data-val="blur">По центру<span class="em">фон-блюр</span></button>
+        <button data-val="track">За лицом<span class="em">приближение</span></button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Сборка</div>
+      <div class="hint">Взять видео целиком или нарезать на сильные куски.</div>
+      <div class="seg" data-key="assembly">
+        <button class="on" data-val="whole">Целиком</button>
+        <button data-val="cut">Нарезать</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Плотный монтаж <span class="soon">СКОРО</span></div>
+      <div class="hint">Убирать паузы, ускорять склейки — динамичный ритм.</div>
+      <div class="row">
+        <div><div class="t">Включить</div></div>
+        <label class="switch"><input type="checkbox" data-key="dense.on"><span class="slider"></span></label>
+      </div>
+      <div class="rangewrap">
+        <span class="val" id="denseVal">50%</span>
+        <div class="d">Интенсивность</div>
+        <input type="range" min="0" max="100" value="50" data-key="dense.intensity" id="denseR">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: CAPTIONS ============ -->
+  <section class="panel-sec" data-sec="caps">
+    <div class="group">
+      <div class="lab">Стиль субтитров</div>
+      <div class="hint">Как показывать речь на видео.</div>
+      <div class="seg" data-key="subs.mode">
+        <button class="on" data-val="karaoke">Слово-за-словом</button>
+        <button data-val="flow">Фразами</button>
+        <button data-val="none">Без субтитров</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Размер <span class="soon">СКОРО</span></div>
+      <div class="hint">Размер текста субтитров.</div>
+      <div class="seg dim" data-key="subs.size">
+        <button data-val="s">S</button>
+        <button class="on" data-val="m">M</button>
+        <button data-val="l">L</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Цвет подсветки <span class="soon">СКОРО</span></div>
+      <div class="hint">Цвет активного слова. Тапни кружок или выбери любой свой.</div>
+      <div class="swatches" data-key="subs.highlight" id="swatches">
+        <div class="sw on" style="background:#E3A21A" data-val="#E3A21A"></div>
+        <div class="sw" style="background:#F5C518" data-val="#F5C518"></div>
+        <div class="sw" style="background:#FF7A00" data-val="#FF7A00"></div>
+        <div class="sw" style="background:#E85D9E" data-val="#E85D9E"></div>
+        <div class="sw" style="background:#C0614C" data-val="#C0614C"></div>
+        <div class="sw" style="background:#6E8B5E" data-val="#6E8B5E"></div>
+        <div class="sw" style="background:#7FA6C9" data-val="#7FA6C9"></div>
+        <div class="sw" style="background:#5277A0" data-val="#5277A0"></div>
+        <div class="sw" style="background:#B57EDC" data-val="#B57EDC"></div>
+        <div class="sw" style="background:#FFFFFF" data-val="#FFFFFF"></div>
+        <div class="sw" style="background:#1E1E1E" data-val="#1E1E1E"></div>
+        <label class="sw custom" title="свой цвет">
+          <input type="color" id="customColor" value="#E3A21A">
+        </label>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Шрифт субтитров <span class="soon">СКОРО</span></div>
+      <div class="hint">Латиница. Каждая кнопка показана своим начертанием.</div>
+      <div class="fontgrid" data-key="subs.font" id="subsFont">
+        <button class="fontbtn on" data-val="montserrat" style="font-family:'Montserrat';font-weight:700">Montserrat</button>
+        <button class="fontbtn"    data-val="manrope"    style="font-family:'Manrope';font-weight:700">Manrope</button>
+        <button class="fontbtn"    data-val="space"      style="font-family:'Space Grotesk';font-weight:700">Space Grotesk</button>
+        <button class="fontbtn"    data-val="syne"       style="font-family:'Syne';font-weight:800">Syne</button>
+        <button class="fontbtn"    data-val="archivo"    style="font-family:'Archivo';font-weight:800">Archivo</button>
+        <button class="fontbtn"    data-val="oswald"     style="font-family:'Oswald';text-transform:uppercase">Oswald</button>
+        <button class="fontbtn"    data-val="bebas"      style="font-family:'Bebas Neue';letter-spacing:.5px;font-size:18px">Bebas Neue</button>
+        <button class="fontbtn"    data-val="anton"      style="font-family:'Anton';text-transform:uppercase">Anton</button>
+        <button class="fontbtn"    data-val="unbounded"  style="font-family:'Unbounded';font-weight:700">Unbounded</button>
+        <button class="fontbtn"    data-val="pixelify"   style="font-family:'Pixelify Sans';font-weight:700">Pixelify</button>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Заголовок на видео</div>
+      <div class="hint">Крупная надпись-хук в начале. Оставь пустым — предложу варианты.</div>
+      <textarea class="field" rows="2" data-key="hook.text" id="hookText" placeholder="Напр.: Почему деньги — это про энергию"></textarea>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Стиль заголовка</div>
+      <div class="seg" data-key="hook.style">
+        <button class="on" data-val="brand">Бренд</button>
+        <button data-val="script">Рукописный</button>
+        <button data-val="statement">Заявление</button>
+      </div>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Расположение — <b>тащи по предпросмотру</b>, или пресет:</div>
+      <div class="seg" data-key="hook.placement">
+        <button class="on" data-val="top">Сверху</button>
+        <button data-val="center">Центр</button>
+        <button data-val="bottom">Снизу</button>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><div class="t">Подложка-панель</div><div class="d">Плашка под текстом для читаемости</div></div>
+        <label class="switch"><input type="checkbox" checked data-key="hook.panel"><span class="slider"></span></label>
+      </div>
+      <div style="height:12px"></div>
+      <div class="d" style="margin-bottom:6px">Шрифт заголовка <span class="soon">СКОРО</span> — латиница, своё начертание:</div>
+      <div class="fontgrid" data-key="hook.font" id="hookFont">
+        <button class="fontbtn on" data-val="playfair"   style="font-family:'Playfair Display';font-weight:700">Playfair</button>
+        <button class="fontbtn"    data-val="fraunces"   style="font-family:'Fraunces';font-weight:600">Fraunces</button>
+        <button class="fontbtn"    data-val="cormorant"  style="font-family:'Cormorant';font-style:italic">Cormorant</button>
+        <button class="fontbtn"    data-val="dmserif"    style="font-family:'DM Serif Display'">DM Serif</button>
+        <button class="fontbtn"    data-val="yeseva"     style="font-family:'Yeseva One'">Yeseva One</button>
+        <button class="fontbtn"    data-val="instrument" style="font-family:'Instrument Serif';font-size:17px">Instrument</button>
+        <button class="fontbtn"    data-val="libre"      style="font-family:'Libre Baskerville';font-weight:700;font-size:13px">Baskerville</button>
+        <button class="fontbtn"    data-val="anton"      style="font-family:'Anton';text-transform:uppercase">Anton</button>
+        <button class="fontbtn"    data-val="bebas"      style="font-family:'Bebas Neue';letter-spacing:.5px;font-size:18px">Bebas Neue</button>
+        <button class="fontbtn"    data-val="unbounded"  style="font-family:'Unbounded';font-weight:700">Unbounded</button>
+        <button class="fontbtn"    data-val="dancing"    style="font-family:'Dancing Script';font-weight:700;font-size:18px">Dancing</button>
+        <button class="fontbtn"    data-val="pacifico"   style="font-family:'Pacifico';font-size:16px">Pacifico</button>
+      </div>
+      <div class="rangewrap">
+        <span class="val" id="hookSizeVal">100%</span>
+        <div class="d">Размер заголовка <span class="soon">СКОРО</span></div>
+        <input type="range" min="60" max="170" value="100" data-key="hook.size" id="hookSizeR">
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ TAB: LOOK & SOUND ============ -->
+  <section class="panel-sec" data-sec="look">
+    <div class="group">
+      <div class="lab">Обработка картинки <span class="soon">СКОРО</span></div>
+      <div class="hint">Цветокоррекция кадра.</div>
+      <div class="seg dim" data-key="look.grade">
+        <button class="on" data-val="none">Без обработки</button>
+        <button data-val="soft">Мягкая</button>
+        <button data-val="warm">Тёплая</button>
+        <button data-val="contrast">Контраст</button>
+      </div>
+      <div class="rangewrap">
+        <span class="val" id="briVal">0</span>
+        <div class="d">Яркость</div>
+        <input type="range" min="-50" max="50" value="0" data-key="look.brightness" id="briR">
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div><div class="t">Сглаживание кожи</div></div>
+        <label class="switch"><input type="checkbox" data-key="look.skin"><span class="slider"></span></label>
+      </div>
+    </div>
+    <div class="group">
+      <div class="lab">Звук <span class="soon">СКОРО</span></div>
+      <div class="hint">Что сделать со звуковой дорожкой.</div>
+      <div class="seg dim" data-key="sound.mode">
+        <button class="on" data-val="enhance">Улучшить</button>
+        <button data-val="source">Как есть</button>
+        <button data-val="denoise">Убрать шум</button>
+        <button data-val="mute">Без звука</button>
+      </div>
+      <div class="rangewrap">
+        <span class="val" id="tempoVal">100%</span>
+        <div class="d">Темп речи</div>
+        <input type="range" min="80" max="120" value="100" data-key="sound.tempo" id="tempoR">
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="cta">
+  <div class="inner">
+    <button class="go" id="go">Собрать рилс</button>
+    <p class="note" id="note">Движок соберёт по этим настройкам</p>
+  </div>
+</div>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
+if (tg) { tg.ready(); tg.expand(); try{ tg.setHeaderColor('#FBF8F2'); }catch(e){} }
+
+// settings model (mapped to galochka render params)
+const S = {
+  v: 1,
+  frame: "blur",
+  assembly: "whole",
+  dense: { on:false, intensity:50 },
+  subs: { mode:"karaoke", size:"m", highlight:"#E3A21A", font:"montserrat" },
+  hook: { text:"", style:"brand", placement:"top", panel:true, font:"playfair", size:100, pos:{ x:0.5, y:0.10 } },
+  subsPos: { x:0.5, y:0.90 },
+  look: { grade:"none", brightness:0, skin:false },
+  sound: { mode:"enhance", tempo:100 }
+};
+
+function setPath(path, val){
+  const p = path.split(".");
+  let o = S;
+  for(let i=0;i<p.length-1;i++) o = o[p[i]];
+  o[p[p.length-1]] = val;
+  render();
+}
+
+// tabs
+document.querySelectorAll(".tab").forEach(t=>{
+  t.onclick = ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("on"));
+    t.classList.add("on");
+    document.querySelectorAll(".panel-sec").forEach(s=>s.classList.remove("on"));
+    document.querySelector('[data-sec="'+t.dataset.tab+'"]').classList.add("on");
+  };
+});
+
+// segmented buttons
+const PLACE_Y = { top:0.10, center:0.46, bottom:0.80 };
+document.querySelectorAll(".seg").forEach(seg=>{
+  const key = seg.dataset.key;
+  seg.querySelectorAll("button").forEach(b=>{
+    b.onclick = ()=>{
+      seg.querySelectorAll("button").forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+      setPath(key, b.dataset.val);
+      if(key === "hook.placement"){ S.hook.pos = { x:0.5, y:PLACE_Y[b.dataset.val] }; render(); }
+    };
+  });
+});
+
+// colour swatches (skip the custom picker — handled separately)
+document.querySelectorAll(".swatches").forEach(sw=>{
+  const key = sw.dataset.key;
+  sw.querySelectorAll(".sw").forEach(s=>{
+    if(s.classList.contains("custom")) return;
+    s.onclick = ()=>{
+      sw.querySelectorAll(".sw").forEach(x=>x.classList.remove("on"));
+      s.classList.add("on");
+      setPath(key, s.dataset.val);
+    };
+  });
+});
+// custom colour picker
+const customColor = document.getElementById("customColor");
+customColor.oninput = ()=>{
+  document.querySelectorAll("#swatches .sw").forEach(x=>x.classList.remove("on"));
+  customColor.parentElement.classList.add("on");
+  setPath("subs.highlight", customColor.value);
+};
+
+// font grids — each button already renders in its own face (latin only)
+const FONT_CSS = {
+  playfair:"'Playfair Display',serif", fraunces:"'Fraunces',serif",
+  cormorant:"'Cormorant',serif", dmserif:"'DM Serif Display',serif",
+  yeseva:"'Yeseva One',serif", instrument:"'Instrument Serif',serif",
+  libre:"'Libre Baskerville',serif",
+  montserrat:"'Montserrat',sans-serif", manrope:"'Manrope',sans-serif",
+  space:"'Space Grotesk',sans-serif", syne:"'Syne',sans-serif",
+  archivo:"'Archivo',sans-serif", oswald:"'Oswald',sans-serif",
+  anton:"'Anton',sans-serif", bebas:"'Bebas Neue',sans-serif",
+  unbounded:"'Unbounded',cursive", pixelify:"'Pixelify Sans',sans-serif",
+  dancing:"'Dancing Script',cursive", pacifico:"'Pacifico',cursive"
+};
+document.querySelectorAll(".fontgrid").forEach(grid=>{
+  const key = grid.dataset.key;
+  grid.querySelectorAll(".fontbtn").forEach(b=>{
+    b.onclick = ()=>{
+      grid.querySelectorAll(".fontbtn").forEach(x=>x.classList.remove("on"));
+      b.classList.add("on");
+      setPath(key, b.dataset.val);
+    };
+  });
+});
+
+// switches + text + ranges
+document.querySelectorAll("[data-key]").forEach(el=>{
+  if(el.type === "checkbox") el.onchange = ()=> setPath(el.dataset.key, el.checked);
+  if(el.tagName === "TEXTAREA") el.oninput = ()=> setPath(el.dataset.key, el.value);
+  if(el.type === "range") el.oninput = ()=> setPath(el.dataset.key, Number(el.value));
+});
+document.getElementById("denseR").addEventListener("input", e=> document.getElementById("denseVal").textContent = e.target.value+"%");
+document.getElementById("briR").addEventListener("input", e=> document.getElementById("briVal").textContent = e.target.value);
+document.getElementById("tempoR").addEventListener("input", e=> document.getElementById("tempoVal").textContent = e.target.value+"%");
+document.getElementById("hookSizeR").addEventListener("input", e=> document.getElementById("hookSizeVal").textContent = e.target.value+"%");
+
+// position a preview element by normalized center point {x,y}
+function placeEl(el, pos){
+  el.style.left = (pos.x*100) + "%";
+  el.style.right = "auto";
+  el.style.top = (pos.y*100) + "%";
+  el.style.bottom = "auto";
+  el.style.transform = "translate(-50%,-50%)";
+  el.style.width = "88%";
+}
+
+// drag hook + subtitles inside the phone preview → store normalized pos
+function makeDraggable(el, get, set){
+  let active = false;
+  const box = document.getElementById("pv");
+  function move(e){
+    if(!active) return;
+    const r = box.getBoundingClientRect();
+    const cx = (e.touches? e.touches[0].clientX : e.clientX);
+    const cy = (e.touches? e.touches[0].clientY : e.clientY);
+    let x = (cx - r.left)/r.width, y = (cy - r.top)/r.height;
+    x = Math.max(0.12, Math.min(0.88, x));
+    y = Math.max(0.05, Math.min(0.95, y));
+    set({x:+x.toFixed(3), y:+y.toFixed(3)});
+    render();
+    e.preventDefault();
+  }
+  function up(){ active=false; el.classList.remove("drag");
+    document.removeEventListener("pointermove",move); document.removeEventListener("pointerup",up); }
+  el.addEventListener("pointerdown", e=>{
+    active=true; el.classList.add("drag");
+    document.addEventListener("pointermove",move); document.addEventListener("pointerup",up);
+    e.preventDefault();
+  });
+}
+makeDraggable(document.getElementById("pvHook"), ()=>S.hook.pos, p=>{ S.hook.pos=p; });
+makeDraggable(document.getElementById("pvSubs"), ()=>S.subsPos, p=>{ S.subsPos=p; });
+
+// live preview
+function render(){
+  const pv = document.getElementById("pv");
+  pv.className = "pv pv-video " + (S.frame==="blur" ? "blur" : "track");
+  document.getElementById("pvLabel").textContent = S.frame==="track" ? "за лицом" : "кадр";
+  const hook = document.getElementById("pvHook");
+  hook.textContent = S.hook.text ? S.hook.text.slice(0,40) : "Headline";
+  hook.className = "pv-hook " + S.hook.style + (S.hook.panel ? " panel" : "");
+  hook.style.fontFamily = FONT_CSS[S.hook.font] || "'Playfair Display',serif";
+  hook.style.fontSize = (12 * S.hook.size / 100).toFixed(1) + "px";
+  placeEl(hook, S.hook.pos);
+  const subs = document.getElementById("pvSubs");
+  subs.className = "pv-subs " + (S.subs.mode==="none" ? "none" : "");
+  subs.style.fontFamily = FONT_CSS[S.subs.font] || "'Montserrat',sans-serif";
+  placeEl(subs, S.subsPos);
+  subs.querySelector(".hl") && (subs.querySelector(".hl").style.color = S.subs.highlight);
+  document.getElementById("pvBadge").textContent = S.assembly==="cut" ? "нарезка" : "9:16";
+}
+render();
+
+// submit
+document.getElementById("go").onclick = ()=>{
+  const payload = JSON.stringify(S);
+  if(tg && tg.sendData){
+    tg.sendData(payload);            // arrives as message.web_app_data.data, closes app
+  } else {
+    document.getElementById("note").textContent = "Предпросмотр (вне Telegram): " + payload.slice(0,60) + "…";
+    console.log("SETTINGS", S);
+  }
+};
+</script>
+</body>
+</html>
