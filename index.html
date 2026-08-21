@@ -318,23 +318,18 @@
         <input type="range" min="-50" max="50" value="0" data-key="look.brightness" id="briR">
       </div>
       <div class="row" style="margin-top:6px">
-        <div><div class="t">Сглаживание кожи <span class="soon">СКОРО</span></div></div>
+        <div><div class="t">Сглаживание кожи</div></div>
         <label class="switch"><input type="checkbox" data-key="look.skin"><span class="slider"></span></label>
       </div>
     </div>
     <div class="group">
-      <div class="lab">Звук <span class="soon">СКОРО</span></div>
+      <div class="lab">Звук</div>
       <div class="hint">Что сделать со звуковой дорожкой.</div>
-      <div class="seg dim" data-key="sound.mode">
+      <div class="seg" data-key="sound.mode">
         <button class="on" data-val="enhance">Улучшить</button>
         <button data-val="source">Как есть</button>
         <button data-val="denoise">Убрать шум</button>
         <button data-val="mute">Без звука</button>
-      </div>
-      <div class="rangewrap">
-        <span class="val" id="tempoVal">100%</span>
-        <div class="d">Темп речи</div>
-        <input type="range" min="80" max="120" value="100" data-key="sound.tempo" id="tempoR">
       </div>
     </div>
   </section>
@@ -380,7 +375,7 @@ const S = {
   hook: { text:"", style:"brand", color:"", placement:"top", panel:true, font:"playfair", size:100, pos:{ x:0.5, y:0.10 } },
   subsPos: { x:0.5, y:0.90 },
   look: { grade:"none", brightness:0, skin:false },
-  sound: { mode:"enhance", tempo:100 }
+  sound: { mode:"enhance" }
 };
 
 function setPath(path, val){
@@ -476,7 +471,6 @@ document.querySelectorAll("[data-key]").forEach(el=>{
 });
 document.getElementById("denseR").addEventListener("input", e=> document.getElementById("denseVal").textContent = e.target.value+"%");
 document.getElementById("briR").addEventListener("input", e=> document.getElementById("briVal").textContent = e.target.value);
-document.getElementById("tempoR").addEventListener("input", e=> document.getElementById("tempoVal").textContent = e.target.value+"%");
 document.getElementById("hookSizeR").addEventListener("input", e=> document.getElementById("hookSizeVal").textContent = e.target.value+"%");
 
 // position a preview element by normalized center point {x,y}
